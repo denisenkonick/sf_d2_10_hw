@@ -1,39 +1,52 @@
-from bottle import Bottle, route, run, response, static_file
+from bottle import Bottle, route, HTTPResponse, static_file
 import os
-from os import path as os_path
-
 
 app = Bottle()
 
 @app.route('/')
 def index():
-	return static_file('index.html', root='static')
+    form = """
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>D2 Temnov</title>
+        <link rel="stylesheet" href="/static/style.css" type="text/css">
+    </head>
+    <body>
+        <h1>This is main page</h1>
+        <hr>
+        <h2>For visit successful page, append to the end of URL "https://young-journey-39325.herokuapp.com/<span style="color: lawngreen;">/success</span>"</h2>
+        <hr>
+        <h2>For visit fail page, append to the end of URL "https://young-journey-39325.herokuapp.com/<span>/fail</span>"</h2>
+        <hr>
+    </body>
+</html>
+"""
+    return form
 
-@app.route('/about')
-def about():
-	return static_file('pages/about.html', root='static')
 
 @app.route('/static/<filename:path>')
 def server_static(filename):
-	return static_file(filename, root='static')
-
+    return static_file(filename, root='static')
 
 @app.route('/success', method='GET')
 def server_success():
-	return "success! success! success!"
+    return HTTPResponse(status=200, body="Successful page")
 
 @app.route('/fail', method='GET')
 def server_fail():
-	raise RuntimeError("There is an error!")
-	return "fail! fail! fail!"
-
+    raise RuntimeError("There is an error!")
+    return HTTPResponse(status=500, body="Fail page")
 
 if os.environ.get("APP_LOCATION") == "heroku":
-    run(
-        host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000)),
-        server="gunicorn",
+    app.run(
+        host='0.0.0.0',
+        port=int(os.environ.get('PORT', 5000)),
+        server='gunicorn',
         workers=3,
     )
-else:
-    run(host="localhost", port=8080, debug=True)
+elif __name__ == "__main__":
+    app.run(host="localhost", port=8080, debug=True)
+    
