@@ -1,4 +1,4 @@
-from bottle import Bottle, route, HTTPResponse, static_file
+from bottle import Bottle, HTTPResponse, static_file
 import os
 import sentry_sdk
 
