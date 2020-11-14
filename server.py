@@ -1,6 +1,7 @@
 from bottle import Bottle, HTTPResponse, static_file
 import os
 import sentry_sdk
+from sentry_sdk.integrations.bottle import BottleIntegration
 
 app = Bottle()
 
